@@ -1,11 +1,18 @@
 <script lang="ts">
-    import { runApp } from "$lib/app";
+    import { dev } from "$app/environment";
+    import { initApp, runApp } from "$lib/app";
+    import { initDevtools } from "@pixi/devtools";
 
     let canvasContainer: HTMLElement | undefined = $state();
 
     $effect(() => {
         if (!canvasContainer) return;
-        runApp(canvasContainer);
+        initApp(canvasContainer).then((app) => {
+            if (dev) {
+                initDevtools({ app });
+            }
+            runApp(app);
+        });
     });
 </script>
 

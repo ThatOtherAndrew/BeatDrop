@@ -1,11 +1,13 @@
-// description: This example demonstrates how to use a Container to group and manipulate multiple sprites
 import { Application, Assets, Container, Sprite } from "pixi.js";
 
-export async function runApp(canvasContainer: HTMLElement) {
+export async function initApp(canvasContainer: HTMLElement) {
     const app = new Application();
-    await app.init({ background: "#1099bb", resizeTo: canvasContainer });
+    await app.init({ background: "black", resizeTo: canvasContainer });
     canvasContainer.appendChild(app.canvas);
+    return app;
+}
 
+export async function runApp(app: Application) {
     // *** BEGIN example code
     // Create and add a container to the stage
     const container = new Container();
