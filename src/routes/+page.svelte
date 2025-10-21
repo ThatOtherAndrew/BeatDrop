@@ -1,2 +1,21 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+    import { runApp } from "$lib/app";
+    import { onMount } from "svelte";
+
+    let canvasContainer: HTMLElement;
+
+    onMount(async () => {
+        const cleanup = await runApp(canvasContainer);
+        return cleanup;
+    });
+</script>
+
+<main bind:this={canvasContainer}></main>
+
+<style>
+    main {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+</style>
