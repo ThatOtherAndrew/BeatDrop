@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { dev } from "$app/environment";
-    import { initApp, runApp } from "$lib/app";
-    import { initDevtools } from "@pixi/devtools";
+    import { dev } from '$app/environment';
+    import { initApp, runApp } from '$lib/app';
+    import { initDevtools } from '@pixi/devtools';
 
     let canvasContainer: HTMLElement | undefined = $state();
 

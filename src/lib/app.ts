@@ -1,8 +1,8 @@
-import { Application, Assets, Container, Sprite } from "pixi.js";
+import { Application, Assets, Container, Sprite } from 'pixi.js';
 
 export async function initApp(canvasContainer: HTMLElement) {
     const app = new Application();
-    await app.init({ background: "black", resizeTo: canvasContainer });
+    await app.init({ background: 'black', resizeTo: canvasContainer });
     canvasContainer.appendChild(app.canvas);
     return app;
 }
@@ -14,7 +14,7 @@ export async function runApp(app: Application) {
     app.stage.addChild(container);
 
     // Load the bunny texture
-    const texture = await Assets.load("https://pixijs.com/assets/bunny.png");
+    const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
 
     // Create a 5x5 grid of bunnies in the container
     for (let i = 0; i < 25; i++) {
