@@ -1,9 +1,7 @@
 // description: This example demonstrates how to use a Container to group and manipulate multiple sprites
 import { Application, Assets, Container, Sprite } from "pixi.js";
 
-export async function runApp(
-    canvasContainer: HTMLElement,
-): Promise<() => void> {
+export async function runApp(canvasContainer: HTMLElement) {
     const app = new Application();
     await app.init({ background: "#1099bb", resizeTo: canvasContainer });
     canvasContainer.appendChild(app.canvas);
@@ -39,9 +37,4 @@ export async function runApp(
         container.rotation -= 0.01 * time.deltaTime;
     });
     // *** END example code
-
-    // Return cleanup function
-    return () => {
-        app.destroy(true, true);
-    };
 }

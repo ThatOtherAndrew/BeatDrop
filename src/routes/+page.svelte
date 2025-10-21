@@ -1,12 +1,11 @@
 <script lang="ts">
     import { runApp } from "$lib/app";
-    import { onMount } from "svelte";
 
-    let canvasContainer: HTMLElement;
+    let canvasContainer: HTMLElement | undefined = $state();
 
-    onMount(async () => {
-        const cleanup = await runApp(canvasContainer);
-        return cleanup;
+    $effect(() => {
+        if (!canvasContainer) return;
+        runApp(canvasContainer);
     });
 </script>
 
