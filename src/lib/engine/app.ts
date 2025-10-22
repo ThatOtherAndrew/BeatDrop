@@ -13,6 +13,13 @@ interface BallCollider {
     collider: Collider;
 }
 
+export interface SimulationControls {
+    play: () => void;
+    pause: () => void;
+    stop: () => void;
+    isPaused: () => boolean;
+}
+
 export async function initApp(canvasContainer: HTMLElement) {
     const app = new Application();
     await app.init({ background: 'black', resizeTo: canvasContainer });
@@ -20,7 +27,7 @@ export async function initApp(canvasContainer: HTMLElement) {
     return app;
 }
 
-export async function runApp(app: Application) {
+export async function runApp(app: Application): Promise<SimulationControls> {
     const rapier = await import('@dimforge/rapier2d');
 
     const gravity = { x: 0, y: 100 };
@@ -31,6 +38,8 @@ export async function runApp(app: Application) {
 
     const BALL_RADIUS = 15;
     const COLLIDER_RADIUS = 30;
+
+    let paused = false;
 
     // Ghost circle (follows cursor)
     const ghostCircle = new Graphics();
@@ -93,12 +102,39 @@ export async function runApp(app: Application) {
         colliders.push(collider);
     });
 
-    app.ticker.add((time) => {
-        world.step();
-        for (const ball of balls) {
-            const position = ball.rigidBody.translation();
-            ball.graphics.x = position.x;
-            ball.graphics.y = position.y;
+    app.ticker.add(() => {
+        if (!paused) {
+            world.step();
+            for (const ball of balls) {
+                const position = ball.rigidBody.translation();
+                ball.graphics.x = position.x;
+                ball.graphics.y = position.y;
+            }
         }
     });
+
+    return {
+        play: () => {
+            paused = false;
+        },
+        pause: () => {
+            paused = true;
+        },
+        stop: () => {
+            paused = true;
+            // Remove all balls
+            for (const ball of balls) {
+                world.removeRigidBody(ball.rigidBody);
+                app.stage.removeChild(ball.graphics);
+            }
+            balls.length = 0;
+            // Remove all colliders
+            for (const collider of colliders) {
+                world.removeCollider(collider.collider, false);
+                app.stage.removeChild(collider.graphics);
+            }
+            colliders.length = 0;
+        },
+        isPaused: () => paused,
+    };
 }
