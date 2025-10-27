@@ -48,6 +48,15 @@ export default class App extends Application {
         sprite.destroy();
     }
 
+    shiftCursor(shift: number): void {
+        this.removeSprite(this.cursors[this.currentCursor]);
+        this.currentCursor = (this.currentCursor + shift) % this.cursors.length;
+        if (this.currentCursor < 0) {
+            this.currentCursor += this.cursors.length;
+        }
+        this.addSprite(this.cursors[this.currentCursor]);
+    }
+
     async run() {
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect();
@@ -57,13 +66,10 @@ export default class App extends Application {
 
         this.addSprite(this.cursors[this.currentCursor]);
 
+        // Cursor switching
         window.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                this.removeSprite(this.cursors[this.currentCursor]);
-                this.currentCursor += 1;
-                this.currentCursor %= this.cursors.length;
-                this.addSprite(this.cursors[this.currentCursor]);
-            }
+            if (event.key === 'ArrowRight') this.shiftCursor(1);
+            if (event.key === 'ArrowLeft') this.shiftCursor(-1);
         });
 
         this.ticker.add(() => {
