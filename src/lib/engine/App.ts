@@ -1,6 +1,7 @@
 import type { World } from '@dimforge/rapier2d';
 import { Application } from 'pixi.js';
 import type Sprite from './objects/Sprite';
+import CursorCircle from './objects/BallCursor';
 
 export default class App extends Application {
     gravity = { x: 0, y: 100 };
@@ -30,6 +31,8 @@ export default class App extends Application {
     }
 
     async run() {
+        this.addSprite(new CursorCircle(this, 20, 0xffffff));
+
         this.ticker.add(() => {
             this.world.step();
             this.sprites.forEach((sprite) => sprite.update());

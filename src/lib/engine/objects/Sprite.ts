@@ -17,5 +17,6 @@ export default abstract class Sprite {
 
     destroy(): void {
         this.app.stage.removeChild(this.graphics);
+        this.graphics.destroy();
     }
 }

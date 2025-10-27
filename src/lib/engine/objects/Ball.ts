@@ -1,20 +1,8 @@
 import type { RigidBody } from '@dimforge/rapier2d';
-import { type Graphics } from 'pixi.js';
-import type App from '../App';
-import Sprite from './Sprite';
+import Circle from './Circle';
 
-export default class Ball extends Sprite {
+export default class Ball extends Circle {
     private readonly rigidBody!: RigidBody;
-
-    constructor(
-        app: App,
-        graphics: Graphics,
-        readonly x: number,
-        readonly y: number,
-        readonly radius: number,
-    ) {
-        super(app, graphics, x, y);
-    }
 
     spawn(): void {
         super.spawn();
@@ -27,13 +15,13 @@ export default class Ball extends Sprite {
 
     update(): void {
         const position = this.rigidBody.translation();
-        this.graphics.x = position.x;
-        this.graphics.y = position.y;
+        this.x = position.x;
+        this.y = position.y;
+        super.update();
     }
 
     destroy(): void {
-        super.destroy();
-
         this.app.world.removeRigidBody(this.rigidBody);
+        super.destroy();
     }
 }
