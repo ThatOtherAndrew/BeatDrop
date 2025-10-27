@@ -1,12 +1,17 @@
-import type { Application, Graphics } from 'pixi.js';
+import type { Graphics } from 'pixi.js';
+import type App from './App';
 
 export default abstract class Sprite {
     constructor(
-        protected app: Application,
+        protected app: App,
         public graphics: Graphics,
         public x: number,
         public y: number,
     ) {}
+
+    spawn(): void {
+        this.app.stage.addChild(this.graphics);
+    }
 
     abstract update(): void;
 

@@ -1,16 +1,28 @@
 import type { RigidBody } from '@dimforge/rapier2d';
+import { type Graphics } from 'pixi.js';
+import type App from './App';
 import Sprite from './Sprite';
-import { Application, type Graphics } from 'pixi.js';
 
 export default class Ball extends Sprite {
+    private readonly rigidBody!: RigidBody;
+
     constructor(
-        app: Application,
+        app: App,
         graphics: Graphics,
-        x: number,
-        y: number,
-        public rigidBody: RigidBody,
+        readonly x: number,
+        readonly y: number,
+        readonly radius: number,
     ) {
         super(app, graphics, x, y);
+    }
+
+    spawn(): void {
+        super.spawn();
+
+        const RigidBodyDesc = this.app.rapier.RigidBodyDesc;
+        const BallDesc = RigidBodyDesc.dynamic().setTranslation(this.x, this.y);
+        (this.rigidBody as RigidBody) =
+            this.app.world.createRigidBody(BallDesc);
     }
 
     update(): void {
@@ -21,6 +33,7 @@ export default class Ball extends Sprite {
 
     destroy(): void {
         super.destroy();
-        this.app.physics;
+
+        this.app.world.removeRigidBody(this.rigidBody);
     }
 }

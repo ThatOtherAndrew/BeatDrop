@@ -20,17 +20,7 @@ export interface SimulationControls {
     isPaused: () => boolean;
 }
 
-export async function initApp(canvasContainer: HTMLElement) {
-    const app = new Application();
-    await app.init({ background: 'black', resizeTo: canvasContainer });
-    canvasContainer.appendChild(app.canvas);
-    return app;
-}
-
 export async function runApp(app: Application): Promise<SimulationControls> {
-    const rapier = await import('@dimforge/rapier2d');
-
-    const gravity = { x: 0, y: 100 };
     const world = new rapier.World(gravity);
 
     const balls: Ball[] = [];
