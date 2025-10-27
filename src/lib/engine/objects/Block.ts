@@ -4,6 +4,19 @@ import Rectangle from './Rectangle';
 export default class Block extends Rectangle {
     private readonly collider!: Collider;
 
+    constructor(
+        app: any,
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        colour: number,
+        rotation: number,
+        public pitch: number = 60,
+    ) {
+        super(app, x, y, width, height, colour, rotation);
+    }
+
     spawn(): void {
         super.spawn();
 
@@ -24,10 +37,9 @@ export default class Block extends Rectangle {
         // Resume audio context on first interaction (browser requirement)
         this.app.soundFont.resume();
 
-        // Play a note based on block height (pitch variation)
-        const note = 60 + Math.floor((this.y / this.app.screen.height) * 24);
+        // Play the note with the block's pitch
         const velocity = 80 + Math.floor(Math.random() * 20);
-        this.app.soundFont.playNote(note, velocity, 0.2);
+        this.app.soundFont.playNote(this.pitch, velocity, 0.2);
     }
 
     destroy(): void {

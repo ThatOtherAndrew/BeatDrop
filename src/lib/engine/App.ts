@@ -9,7 +9,7 @@ export default class App extends Application {
     gravity = { x: 0, y: 100 };
     cursors = [
         new BallCursor(this, 20, 0xffffff),
-        new BlockCursor(this, 100, 20, 0xff0000),
+        new BlockCursor(this, 100, 20, 0x00ff00), // Initial color (will be updated by pitch)
     ];
 
     readonly world: World;
