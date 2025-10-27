@@ -94,16 +94,51 @@ export default class App extends Application {
             this.world.step(this.eventQueue);
 
             // Process collision events
-            this.eventQueue.drainCollisionEvents((handle1: number, handle2: number, started: boolean) => {
-                if (started) {
-                    // Collision started
-                    const sprite1 = this.colliderMap.get(handle1);
-                    const sprite2 = this.colliderMap.get(handle2);
+            this.eventQueue.drainCollisionEvents(
+                (handle1: number, handle2: number, started: boolean) => {
+                    if (started) {
+                        // Get colliders
+                        const collider1 = this.world.getCollider(handle1);
+                        const collider2 = this.world.getCollider(handle2);
 
-                    if (sprite1?.onCollision) sprite1.onCollision();
-                    if (sprite2?.onCollision) sprite2.onCollision();
-                }
-            });
+                        if (!collider1 || !collider2) return;
+
+                        // Check velocities to filter out resting/jittering collisions
+                        const body1 = collider1.parent();
+                        const body2 = collider2.parent();
+
+                        let hasSignificantVelocity = false;
+                        const minVelocityThreshold = 15.0; // Minimum velocity to trigger sound
+
+                        if (body1) {
+                            const vel1 = body1.linvel();
+                            const speed1 = Math.sqrt(
+                                vel1.x * vel1.x + vel1.y * vel1.y,
+                            );
+                            if (speed1 > minVelocityThreshold)
+                                hasSignificantVelocity = true;
+                        }
+
+                        if (body2) {
+                            const vel2 = body2.linvel();
+                            const speed2 = Math.sqrt(
+                                vel2.x * vel2.x + vel2.y * vel2.y,
+                            );
+                            if (speed2 > minVelocityThreshold)
+                                hasSignificantVelocity = true;
+                        }
+
+                        // Only trigger collision sounds if there's significant movement
+                        if (hasSignificantVelocity) {
+                            const sprite1 = this.colliderMap.get(handle1);
+                            const sprite2 = this.colliderMap.get(handle2);
+
+                            if (sprite1?.onCollision) sprite1.onCollision();
+                            if (sprite2?.onCollision) sprite2.onCollision();
+                        }
+                    }
+                },
+            );
 
             this.sprites.forEach((sprite) => sprite.update());
         });
