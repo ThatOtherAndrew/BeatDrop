@@ -15,6 +15,8 @@ export default abstract class Sprite {
 
     abstract update(): void;
 
+    onCollision?(): void;
+
     destroy(): void {
         this.app.stage.removeChild(this.graphics);
     }

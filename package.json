@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@dimforge/rapier2d": "^0.19.2",
-    "pixi.js": "^8.14.0"
+    "pixi.js": "^8.14.0",
+    "soundfont-player": "^0.12.0"
   }
 }

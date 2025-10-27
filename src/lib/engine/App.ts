@@ -3,6 +3,7 @@ import { Application } from 'pixi.js';
 import type Sprite from './objects/Sprite';
 import BallCursor from './objects/BallCursor';
 import BlockCursor from './objects/BlockCursor';
+import SoundFontPlayer from './audio/SoundFontPlayer';
 
 export default class App extends Application {
     gravity = { x: 0, y: 100 };
@@ -12,8 +13,11 @@ export default class App extends Application {
     ];
 
     readonly world: World;
+    readonly soundFont: SoundFontPlayer;
     private sprites: Sprite[] = [];
     private currentCursor: number = 0;
+    private colliderMap = new Map<number, Sprite>();
+    private eventQueue: any;
 
     mouseX = 0;
     mouseY = 0;
@@ -21,6 +25,8 @@ export default class App extends Application {
     private constructor(readonly rapier: typeof import('@dimforge/rapier2d')) {
         super();
         this.world = new this.rapier.World(this.gravity);
+        this.soundFont = new SoundFontPlayer();
+        this.eventQueue = new this.rapier.EventQueue(true);
     }
 
     static async init(container: HTMLElement): Promise<App> {
@@ -28,6 +34,10 @@ export default class App extends Application {
         const app = new App(rapier);
         await app.init({ background: 'black', resizeTo: container });
         container.appendChild(app.canvas);
+
+        // Load soundfont instrument (marimba for percussive sound)
+        await app.soundFont.load('marimba');
+
         return app;
     }
 
@@ -46,6 +56,14 @@ export default class App extends Application {
         }
         this.sprites.splice(index, 1);
         sprite.destroy();
+    }
+
+    registerCollider(colliderHandle: number, sprite: Sprite): void {
+        this.colliderMap.set(colliderHandle, sprite);
+    }
+
+    unregisterCollider(colliderHandle: number): void {
+        this.colliderMap.delete(colliderHandle);
     }
 
     shiftCursor(shift: number): void {
@@ -73,7 +91,20 @@ export default class App extends Application {
         });
 
         this.ticker.add(() => {
-            this.world.step();
+            this.world.step(this.eventQueue);
+
+            // Process collision events
+            this.eventQueue.drainCollisionEvents((handle1: number, handle2: number, started: boolean) => {
+                if (started) {
+                    // Collision started
+                    const sprite1 = this.colliderMap.get(handle1);
+                    const sprite2 = this.colliderMap.get(handle2);
+
+                    if (sprite1?.onCollision) sprite1.onCollision();
+                    if (sprite2?.onCollision) sprite2.onCollision();
+                }
+            });
+
             this.sprites.forEach((sprite) => sprite.update());
         });
     }

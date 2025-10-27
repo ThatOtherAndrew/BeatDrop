@@ -63,14 +63,14 @@ export default class BlockCursor extends Rectangle {
         const canvas = this.app.canvas;
         canvas.addEventListener('mousemove', this.mouseMoveHandler);
         canvas.addEventListener('mousedown', this.mouseClickHandler);
-        canvas.addEventListener('wheel', this.wheelHandler);
+        canvas.addEventListener('wheel', this.wheelHandler, { passive: false });
     }
 
     destroy(): void {
         const canvas = this.app.canvas;
         canvas.removeEventListener('mousemove', this.mouseMoveHandler);
         canvas.removeEventListener('mousedown', this.mouseClickHandler);
-        canvas.removeEventListener('wheel', this.wheelHandler);
+        canvas.removeEventListener('wheel', this.wheelHandler, { passive: false } as any);
         super.destroy();
     }
 }
