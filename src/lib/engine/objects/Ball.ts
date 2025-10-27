@@ -11,6 +11,12 @@ export default class Ball extends Circle {
         const BallDesc = RigidBodyDesc.dynamic().setTranslation(this.x, this.y);
         (this.rigidBody as RigidBody) =
             this.app.world.createRigidBody(BallDesc);
+
+        const ColliderDesc = this.app.rapier.ColliderDesc;
+        this.app.world.createCollider(
+            ColliderDesc.ball(this.radius),
+            this.rigidBody,
+        );
     }
 
     update(): void {
