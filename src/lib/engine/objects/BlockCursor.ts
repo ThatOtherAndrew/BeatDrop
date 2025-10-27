@@ -1,13 +1,13 @@
 import type App from '../App';
 import Ball from './Ball';
-import Circle from './Circle';
+import Rectangle from './Rectangle';
 
-export default class BallCursor extends Circle {
+export default class BlockCursor extends Rectangle {
     private mouseMoveHandler: (e: MouseEvent) => void;
     private mouseClickHandler: (e: MouseEvent) => void;
 
-    constructor(app: App, radius: number, colour: number) {
-        super(app, app.mouseX, app.mouseY, radius, colour);
+    constructor(app: App, width: number, height: number, colour: number) {
+        super(app, app.mouseX, app.mouseY, width, height, colour);
 
         this.graphics.alpha = 0.5;
 
@@ -22,7 +22,7 @@ export default class BallCursor extends Circle {
                     this.app,
                     this.x,
                     this.y,
-                    this.radius,
+                    10,
                     this.colour,
                 );
                 this.app.addSprite(ball);
