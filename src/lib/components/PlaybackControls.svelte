@@ -1,29 +1,15 @@
 <script lang="ts">
-    import type { SimulationControls } from '$lib/engine/app';
     import Pause from 'phosphor-svelte/lib/Pause';
     import Play from 'phosphor-svelte/lib/Play';
     import Stop from 'phosphor-svelte/lib/Stop';
 
-    interface Props {
-        controls: SimulationControls;
-    }
-
-    let { controls }: Props = $props();
-
     let isPlaying = $state(true);
 
     function togglePlayPause() {
-        if (isPlaying) {
-            controls.pause();
-            isPlaying = false;
-        } else {
-            controls.play();
-            isPlaying = true;
-        }
+        isPlaying = !isPlaying;
     }
 
     function handleStop() {
-        controls.stop();
         isPlaying = false;
     }
 </script>

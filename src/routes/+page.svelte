@@ -1,29 +1,24 @@
 <script lang="ts">
     import { dev } from '$app/environment';
     import PlaybackControls from '$lib/components/PlaybackControls.svelte';
-    import type { SimulationControls } from '$lib/engine/main';
-    import { initApp, runApp } from '$lib/engine/main';
     import { initDevtools } from '@pixi/devtools';
+    import App from '$lib/engine/App';
 
     let canvasContainer: HTMLElement | undefined = $state();
-    let controls: SimulationControls | undefined = $state();
 
     $effect(() => {
         if (!canvasContainer) return;
-        initApp(canvasContainer).then(async (app) => {
-            if (dev) {
-                initDevtools({ app });
-            }
-            controls = await runApp(app);
+
+        App.init(canvasContainer).then(async (app) => {
+            if (dev) initDevtools({ app });
+            await app.run();
         });
     });
 </script>
 
 <main>
     <div class="canvas-container" bind:this={canvasContainer}></div>
-    {#if controls}
-        <PlaybackControls {controls} />
-    {/if}
+    <PlaybackControls />
 </main>
 
 <style>

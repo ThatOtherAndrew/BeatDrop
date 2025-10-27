@@ -1,6 +1,6 @@
 import type { RigidBody } from '@dimforge/rapier2d';
 import { type Graphics } from 'pixi.js';
-import type App from './App';
+import type App from '../App';
 import Sprite from './Sprite';
 
 export default class Ball extends Sprite {

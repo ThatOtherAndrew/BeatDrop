@@ -1,5 +1,5 @@
 import type { Graphics } from 'pixi.js';
-import type App from './App';
+import type App from '../App';
 
 export default abstract class Sprite {
     constructor(

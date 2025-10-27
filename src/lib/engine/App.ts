@@ -1,6 +1,6 @@
 import type { World } from '@dimforge/rapier2d';
 import { Application } from 'pixi.js';
-import type Sprite from './Sprite';
+import type Sprite from './objects/Sprite';
 
 export default class App extends Application {
     gravity = { x: 0, y: 100 };
