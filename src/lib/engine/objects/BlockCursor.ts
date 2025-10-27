@@ -1,5 +1,5 @@
 import type App from '../App';
-import Ball from './Ball';
+import Block from './Block';
 import Rectangle from './Rectangle';
 
 export default class BlockCursor extends Rectangle {
@@ -18,14 +18,15 @@ export default class BlockCursor extends Rectangle {
 
         this.mouseClickHandler = (e: MouseEvent) => {
             if (e.button === 0) {
-                const ball = new Ball(
+                const block = new Block(
                     this.app,
                     this.x,
                     this.y,
-                    10,
+                    this.width,
+                    this.height,
                     this.colour,
                 );
-                this.app.addSprite(ball);
+                this.app.addSprite(block);
             }
         };
     }
