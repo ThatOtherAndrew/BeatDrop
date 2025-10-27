@@ -11,7 +11,8 @@ export default class Block extends Rectangle {
             // prettier-ignore
             this.app.rapier.ColliderDesc
                 .cuboid(this.width / 2, this.height / 2)
-                .setTranslation(this.x, this.y),
+                .setTranslation(this.x, this.y)
+                .setRestitution(1),
         );
     }
 

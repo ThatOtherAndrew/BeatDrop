@@ -14,7 +14,7 @@ export default class Ball extends Circle {
 
         const ColliderDesc = this.app.rapier.ColliderDesc;
         this.app.world.createCollider(
-            ColliderDesc.ball(this.radius),
+            ColliderDesc.ball(this.radius).setRestitution(1),
             this.rigidBody,
         );
     }
