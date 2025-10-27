@@ -12,6 +12,7 @@ export default class Block extends Rectangle {
             this.app.rapier.ColliderDesc
                 .cuboid(this.width / 2, this.height / 2)
                 .setTranslation(this.x, this.y)
+                .setRotation(this.rotation)
                 .setRestitution(1),
         );
     }
