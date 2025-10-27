@@ -1,8 +1,8 @@
 <script lang="ts">
     import { dev } from '$app/environment';
     import PlaybackControls from '$lib/components/PlaybackControls.svelte';
-    import type { SimulationControls } from '$lib/engine/app';
-    import { initApp, runApp } from '$lib/engine/app';
+    import type { SimulationControls } from '$lib/engine/main';
+    import { initApp, runApp } from '$lib/engine/main';
     import { initDevtools } from '@pixi/devtools';
 
     let canvasContainer: HTMLElement | undefined = $state();
