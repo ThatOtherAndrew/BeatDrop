@@ -9,6 +9,8 @@ export default class BallCursor extends Circle {
     constructor(app: App, radius: number, colour: number) {
         super(app, 0, 0, radius, colour);
 
+        this.graphics.alpha = 0.5;
+
         this.mouseMoveHandler = (e: MouseEvent) => {
             const rect = this.app.canvas.getBoundingClientRect();
             this.x = e.clientX - rect.left;
@@ -16,8 +18,14 @@ export default class BallCursor extends Circle {
         };
 
         this.mouseClickHandler = (e: MouseEvent) => {
-            if (e.button === 0) { // Left click
-                const ball = new Ball(this.app, this.x, this.y, this.radius, this.colour);
+            if (e.button === 0) {
+                const ball = new Ball(
+                    this.app,
+                    this.x,
+                    this.y,
+                    this.radius,
+                    this.colour,
+                );
                 this.app.addSprite(ball);
             }
         };
@@ -25,14 +33,15 @@ export default class BallCursor extends Circle {
 
     spawn(): void {
         super.spawn();
-        this.graphics.alpha = 0.5;
-        this.app.canvas.addEventListener('mousemove', this.mouseMoveHandler);
-        this.app.canvas.addEventListener('mousedown', this.mouseClickHandler);
+        const canvas = this.app.canvas;
+        canvas.addEventListener('mousemove', this.mouseMoveHandler);
+        canvas.addEventListener('mousedown', this.mouseClickHandler);
     }
 
     destroy(): void {
-        this.app.canvas.removeEventListener('mousemove', this.mouseMoveHandler);
-        this.app.canvas.removeEventListener('mousedown', this.mouseClickHandler);
+        const canvas = this.app.canvas;
+        canvas.removeEventListener('mousemove', this.mouseMoveHandler);
+        canvas.removeEventListener('mousedown', this.mouseClickHandler);
         super.destroy();
     }
 }
