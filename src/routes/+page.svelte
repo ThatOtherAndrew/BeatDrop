@@ -20,7 +20,7 @@
 
 <main>
     <div class="canvas-container" bind:this={canvasContainer}></div>
-    <PlaybackControls />
+    <!-- <PlaybackControls /> -->
 </main>
 
 <style>
