@@ -1,7 +1,6 @@
 <script lang="ts">
     import { dev } from '$app/environment';
     import PlaybackControls from '$lib/components/PlaybackControls.svelte';
-    import { initDevtools } from '@pixi/devtools';
     import App from '$lib/engine/App';
 
     let canvasContainer: HTMLElement | undefined = $state();
@@ -10,7 +9,10 @@
         if (!canvasContainer) return;
 
         App.init(canvasContainer).then(async (app) => {
-            if (dev) initDevtools({ app });
+            if (dev) {
+                const { initDevtools } = await import('@pixi/devtools');
+                initDevtools({ app });
+            }
             await app.run();
         });
     });
