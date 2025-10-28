@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-    <link rel="icon" href={favicon} />
+    <title>BeatDrop!</title>
 </svelte:head>
 
 {@render children?.()}
