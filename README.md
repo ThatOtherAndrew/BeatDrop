@@ -2,7 +2,7 @@
 
 Make music with physics!
 
-![BeatDrop! demo video](https://github.com/user-attachments/assets/f63a0113-8706-4683-97e1-d89d4dc100a4)
+https://github.com/user-attachments/assets/f63a0113-8706-4683-97e1-d89d4dc100a4
 
 [Try out BeatDrop!](https://thatotherandrew.github.io/BeatDrop/)
 
