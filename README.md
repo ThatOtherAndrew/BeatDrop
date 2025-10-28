@@ -2,6 +2,8 @@
 
 Make music with physics!
 
+[Try out BeatDrop!](https://thatotherandrew.github.io/BeatDrop/)
+
 ## How to use
 
 Click on the canvas to spawn **bricks** which play musical notes when hit, and **balls** which fall and hit the bricks.
