@@ -1,9 +1,11 @@
 <script lang="ts">
     import { dev } from '$app/environment';
     import PlaybackControls from '$lib/components/PlaybackControls.svelte';
+    import WelcomeModal from '$lib/components/WelcomeModal.svelte';
     import App from '$lib/engine/App';
 
     let canvasContainer: HTMLElement | undefined = $state();
+    let modalOpen = $state(true);
 
     $effect(() => {
         if (!canvasContainer) return;
@@ -22,6 +24,8 @@
     <div class="canvas-container" bind:this={canvasContainer}></div>
     <!-- <PlaybackControls /> -->
 </main>
+
+<WelcomeModal bind:isOpen={modalOpen} />
 
 <style>
     main {
