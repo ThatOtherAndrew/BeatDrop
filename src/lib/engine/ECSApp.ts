@@ -7,9 +7,10 @@ type Entity = {
     position: { x: number; y: number };
     graphics?: Graphics;
     rigidBody?: RigidBody;
+    cursor?: true;
 };
 
-class ECSApp {
+export default class ECSApp {
     gravity = { x: 0, y: 100 };
 
     readonly world: World;

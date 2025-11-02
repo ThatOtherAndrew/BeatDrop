@@ -1,8 +1,7 @@
 <script lang="ts">
     import { dev } from '$app/environment';
-    import PlaybackControls from '$lib/components/PlaybackControls.svelte';
     import WelcomeModal from '$lib/components/WelcomeModal.svelte';
-    import App from '$lib/engine/App';
+    import App from '$lib/engine/ECSApp';
 
     let canvasContainer: HTMLElement | undefined = $state();
     let modalOpen = $state(true);
@@ -10,12 +9,11 @@
     $effect(() => {
         if (!canvasContainer) return;
 
-        App.init(canvasContainer).then(async (app) => {
+        App.init(canvasContainer, 'marimba').then(async (app) => {
             if (dev) {
                 const { initDevtools } = await import('@pixi/devtools');
-                initDevtools({ app });
+                initDevtools({ app: app.graphics });
             }
-            await app.run();
         });
     });
 </script>
