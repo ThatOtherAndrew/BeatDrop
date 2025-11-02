@@ -9,18 +9,18 @@
     $effect(() => {
         if (!canvasContainer) return;
 
-        App.init(canvasContainer, 'marimba').then(async (app) => {
+        App.init(canvasContainer).then(async (app) => {
             if (dev) {
                 const { initDevtools } = await import('@pixi/devtools');
                 initDevtools({ app: app.graphics });
             }
+            app.run();
         });
     });
 </script>
 
 <main>
     <div class="canvas-container" bind:this={canvasContainer}></div>
-    <!-- <PlaybackControls /> -->
 </main>
 
 <WelcomeModal bind:isOpen={modalOpen} />
