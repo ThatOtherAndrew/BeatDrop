@@ -88,6 +88,7 @@ export default class App extends Application {
         window.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') this.shiftCursor(1);
             if (event.key === 'ArrowLeft') this.shiftCursor(-1);
+            // if (event.key === 'Space') this.tick();
         });
 
         this.ticker.add(() => {
