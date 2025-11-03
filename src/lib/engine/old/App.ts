@@ -1,9 +1,9 @@
 import type { World } from '@dimforge/rapier2d';
 import { Application } from 'pixi.js';
-import type Sprite from './objects/Sprite';
-import BallCursor from './objects/BallCursor';
-import BlockCursor from './objects/BlockCursor';
-import SoundFontPlayer from './audio/SoundFontPlayer';
+import type Sprite from '../objects/Sprite';
+import BallCursor from '../objects/BallCursor';
+import BlockCursor from '../objects/BlockCursor';
+import SoundFontPlayer from '../audio/SoundFontPlayer';
 
 export default class App extends Application {
     gravity = { x: 0, y: 100 };
