@@ -8,7 +8,7 @@ export default class ECSApp {
 
     // temp
     circle = new Graphics()
-        .circle(this.mouseX, this.mouseY, 25)
+        .circle(this.mouseX, this.mouseY, 10)
         .fill({ color: 0xffffff, alpha: 0.5 });
 
     private constructor(
@@ -42,13 +42,25 @@ export default class ECSApp {
                 this.scene.entities.push({
                     type: 'ball',
                     position: { x: this.mouseX, y: this.mouseY },
-                    radius: 25,
+                    radius: 10,
                 });
                 this.simulation.loadScene(this.scene);
             }
         });
 
         window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                const blob = new Blob([this.scene.save()], {
+                    type: 'application/json',
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'scene.json';
+                a.click();
+            }
+
             if (e.key === 'ArrowRight') {
                 this.simulation.tick();
             } else if (e.key === ' ') {

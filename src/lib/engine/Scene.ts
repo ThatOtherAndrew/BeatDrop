@@ -11,4 +11,16 @@ export default class Scene {
         public name: String = 'Untitled Scene',
         public entities: Entity[] = [],
     ) {}
+
+    static load(data: string): Scene {
+        const obj = JSON.parse(data);
+        return new Scene(obj.name, obj.entities);
+    }
+
+    save(): string {
+        return JSON.stringify({
+            name: this.name,
+            entities: this.entities,
+        });
+    }
 }

@@ -40,7 +40,6 @@ export default class Simulation {
 
     private initCallbacks() {
         this.queries.renderable.onEntityAdded.subscribe((entity) => {
-            console.debug('Entity added:', entity);
             this.graphics.stage.addChild(entity.graphics);
         });
 
