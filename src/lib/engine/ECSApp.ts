@@ -1,24 +1,27 @@
 import { Application, Graphics } from 'pixi.js';
 import Simulation from './Simulation';
+import Scene from './Scene';
 
 export default class ECSApp {
-    readonly graphics: Application;
+    private readonly graphics = new Application();
 
-    mouseX: number = 0;
-    mouseY: number = 0;
+    private mouseX: number = 0;
+    private mouseY: number = 0;
 
     // temp
     circle = new Graphics()
         .circle(0, 0, 10)
         .fill({ color: 0xffffff, alpha: 0.5 });
 
-    private constructor(readonly simulation: Simulation) {
-        this.graphics = new Application();
-    }
+    private constructor(
+        private readonly simulation: Simulation,
+        private scene: Scene,
+    ) {}
 
     static async init(container: HTMLElement): Promise<ECSApp> {
-        const simulation = await Simulation.init();
-        const app = new ECSApp(simulation);
+        const scene = new Scene();
+        const simulation = await Simulation.init(scene);
+        const app = new ECSApp(simulation, scene);
 
         await app.graphics.init({ background: 'black', resizeTo: container });
         app.graphics.stage.addChild(app.circle);
@@ -36,11 +39,7 @@ export default class ECSApp {
 
         this.graphics.canvas.addEventListener('mousedown', (e) => {
             if (e.button === 0) {
-                this.simulation.world.add({
-                    position: { x: this.mouseX, y: this.mouseY },
-                    graphics: this.circle.clone().fill({ alpha: 1 }),
-                    rigidBody: null /* TODO */;
-                });
+                /* TODO */
             }
         });
 
