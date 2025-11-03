@@ -9,7 +9,7 @@ export default class ECSApp {
 
     // temp
     circle = new Graphics()
-        .circle(0, 0, 25)
+        .circle(0, 0, 10)
         .fill({ color: 0xffffff, alpha: 0.5 });
 
     private constructor(readonly simulation: Simulation) {
@@ -32,6 +32,23 @@ export default class ECSApp {
             const rect = this.graphics.canvas.getBoundingClientRect();
             this.mouseX = e.clientX - rect.left;
             this.mouseY = e.clientY - rect.top;
+        });
+
+        this.graphics.canvas.addEventListener('mousedown', (e) => {
+            if (e.button === 0) {
+                this.simulation.world.add({
+                    position: { x: this.mouseX, y: this.mouseY },
+                    graphics: this.circle.clone().fill({ alpha: 1 }),
+                    rigidBody: null /* TODO */;
+                });
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === ' ') {
+                console.log('tick');
+                this.simulation.tick();
+            }
         });
 
         this.graphics.ticker.add(() => {

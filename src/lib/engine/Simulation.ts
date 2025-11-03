@@ -1,7 +1,6 @@
 import { Query, World } from 'miniplex';
 import type { World as PhysicsWorld, RigidBody } from '@dimforge/rapier2d';
 import { Graphics, Application } from 'pixi.js';
-import SoundFontPlayer from './audio/SoundFontPlayer';
 
 type Entity = {
     position: { x: number; y: number };
@@ -13,14 +12,14 @@ type Entity = {
 export default class Simulation {
     gravity = { x: 0, y: 100 };
 
-    readonly world: World;
+    readonly world: World<Entity>;
     readonly graphics: Application;
     readonly rapier: typeof import('@dimforge/rapier2d');
     readonly physics: PhysicsWorld;
-    readonly queries: Record<string, Query<Entity>>;
+    readonly queries;
 
     constructor(rapier: typeof import('@dimforge/rapier2d')) {
-        this.world = new World<Entity>();
+        this.world = new World();
         this.graphics = new Application();
         this.rapier = rapier;
         this.physics = new rapier.World(this.gravity);
@@ -56,8 +55,8 @@ export default class Simulation {
         }
 
         for (const entity of this.queries.renderable) {
-            entity.graphics!.x = entity.position.x;
-            entity.graphics!.y = entity.position.y;
+            entity.graphics.x = entity.position.x;
+            entity.graphics.y = entity.position.y;
         }
     }
 }
