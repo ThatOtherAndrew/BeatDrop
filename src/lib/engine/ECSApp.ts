@@ -59,14 +59,38 @@ export default class ECSApp {
                 a.href = url;
                 a.download = 'scene.json';
                 a.click();
+                return;
+            }
+
+            if (e.ctrlKey && e.key === 'o') {
+                e.preventDefault();
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'application/json';
+                input.onchange = (event: any) => {
+                    const file = event.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const content = e.target?.result as string;
+                        this.scene = Scene.load(content);
+                        this.simulation.loadScene(this.scene);
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+                return;
             }
 
             if (e.key === 'ArrowRight') {
                 this.simulation.tick();
-            } else if (e.key === ' ') {
+                return;
+            }
+
+            if (e.key === ' ') {
                 for (let i = 0; i < 10; i++) {
                     this.simulation.tick();
                 }
+                return;
             }
         });
 
