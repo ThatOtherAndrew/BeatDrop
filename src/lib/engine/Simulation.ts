@@ -94,8 +94,12 @@ export default class Simulation {
                 entity.position.y,
             ),
         );
+        const collider = this.physics.createCollider(
+            this.rapier.ColliderDesc.ball(entity.radius),
+            rigidBody,
+        );
 
-        this.world.add({ position, graphics, rigidBody });
+        this.world.add({ position, graphics, rigidBody, collider });
     }
 
     loadScene(scene: Scene) {
