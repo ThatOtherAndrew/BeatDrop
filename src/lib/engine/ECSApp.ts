@@ -49,9 +49,12 @@ export default class ECSApp {
         });
 
         window.addEventListener('keydown', (e) => {
-            if (e.key === ' ') {
-                console.log('tick');
+            if (e.key === 'ArrowRight') {
                 this.simulation.tick();
+            } else if (e.key === ' ') {
+                for (let i = 0; i < 10; i++) {
+                    this.simulation.tick();
+                }
             }
         });
 

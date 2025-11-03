@@ -20,20 +20,15 @@ export default class Simulation {
     public readonly gravity = { x: 0, y: 100 } as const;
 
     private physics: PhysicsWorld;
-    private readonly world: World<Entity>;
-    private readonly graphics: Application;
-    private readonly rapier: typeof import('@dimforge/rapier2d');
+    private readonly world: World<Entity> = new World();
     private readonly queries;
 
     private constructor(
-        rapier: typeof import('@dimforge/rapier2d'),
-        graphics: Application,
+        private readonly rapier: typeof import('@dimforge/rapier2d'),
+        private readonly graphics: Application,
         scene: Scene,
     ) {
         this.physics = new rapier.World(this.gravity);
-        this.world = new World();
-        this.graphics = graphics;
-        this.rapier = rapier;
         this.queries = {
             renderable: this.world.with('graphics'),
             dynamic: this.world.with('rigidBody'),
