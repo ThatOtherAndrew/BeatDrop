@@ -3,8 +3,6 @@ import Simulation from './Simulation';
 import Scene from './Scene';
 
 export default class ECSApp {
-    private readonly graphics = new Application();
-
     private mouseX: number = 0;
     private mouseY: number = 0;
 
@@ -15,13 +13,15 @@ export default class ECSApp {
 
     private constructor(
         private readonly simulation: Simulation,
+        private readonly graphics: Application,
         private scene: Scene,
     ) {}
 
     static async init(container: HTMLElement): Promise<ECSApp> {
+        const graphics = new Application();
         const scene = new Scene();
-        const simulation = await Simulation.init(scene);
-        const app = new ECSApp(simulation, scene);
+        const simulation = await Simulation.init(graphics, scene);
+        const app = new ECSApp(simulation, graphics, scene);
 
         await app.graphics.init({ background: 'black', resizeTo: container });
         app.graphics.stage.addChild(app.circle);
@@ -39,7 +39,12 @@ export default class ECSApp {
 
         this.graphics.canvas.addEventListener('mousedown', (e) => {
             if (e.button === 0) {
-                /* TODO */
+                this.scene.entities.push({
+                    type: 'ball',
+                    position: { x: this.mouseX, y: this.mouseY },
+                    radius: 25,
+                });
+                this.simulation.loadScene(this.scene);
             }
         });
 

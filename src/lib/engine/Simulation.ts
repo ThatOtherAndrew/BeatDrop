@@ -1,12 +1,18 @@
-import type { World as PhysicsWorld, RigidBody } from '@dimforge/rapier2d';
+import type {
+    Collider,
+    World as PhysicsWorld,
+    RigidBody,
+} from '@dimforge/rapier2d';
 import { World } from 'miniplex';
 import { Application, Graphics } from 'pixi.js';
 import type Scene from './Scene';
+import type { Ball } from './Scene';
 
 type Entity = {
     position: { x: number; y: number };
     graphics?: Graphics;
     rigidBody?: RigidBody;
+    collider?: Collider;
     cursor?: true;
 };
 
@@ -19,10 +25,14 @@ export default class Simulation {
     private readonly rapier: typeof import('@dimforge/rapier2d');
     private readonly queries;
 
-    constructor(rapier: typeof import('@dimforge/rapier2d'), scene: Scene) {
+    private constructor(
+        rapier: typeof import('@dimforge/rapier2d'),
+        graphics: Application,
+        scene: Scene,
+    ) {
         this.physics = new rapier.World(this.gravity);
         this.world = new World();
-        this.graphics = new Application();
+        this.graphics = graphics;
         this.rapier = rapier;
         this.queries = {
             renderable: this.world.with('graphics'),
@@ -30,22 +40,26 @@ export default class Simulation {
         };
 
         this.initCallbacks();
-        this.addEntities(scene);
+        this.spawnEntitiesFromScene(scene);
     }
 
     private initCallbacks() {
         this.queries.renderable.onEntityAdded.subscribe((entity) => {
-            this.graphics.stage.addChild(entity.graphics!);
+            console.debug('Entity added:', entity);
+            this.graphics.stage.addChild(entity.graphics);
         });
 
         this.queries.renderable.onEntityRemoved.subscribe((entity) => {
-            this.graphics.stage.removeChild(entity.graphics!);
+            this.graphics.stage.removeChild(entity.graphics);
         });
     }
 
-    static async init(scene: Scene): Promise<Simulation> {
+    static async init(
+        graphics: Application,
+        scene: Scene,
+    ): Promise<Simulation> {
         const rapier = await import('@dimforge/rapier2d');
-        const app = new Simulation(rapier, scene);
+        const app = new Simulation(rapier, graphics, scene);
 
         return app;
     }
@@ -56,26 +70,50 @@ export default class Simulation {
         this.world.clear();
     }
 
-    private addEntities(scene: Scene) {
+    private spawnEntitiesFromScene(scene: Scene) {
         for (const entity of scene.entities) {
-            this.world.add(entity);
+            switch (entity.type) {
+                case 'ball':
+                    this.spawnBall(entity);
+                    break;
+                default:
+                    console.warn(`Unknown entity type: ${entity.type}`);
+            }
         }
+    }
+
+    private spawnBall(entity: Ball) {
+        console.log('Spawning ball:', entity);
+        const position = { x: entity.position.x, y: entity.position.y };
+        const graphics = new Graphics()
+            .circle(0, 0, entity.radius)
+            .fill({ color: 0xffffff });
+        const rigidBody = this.physics.createRigidBody(
+            this.rapier.RigidBodyDesc.dynamic().setTranslation(
+                entity.position.x,
+                entity.position.y,
+            ),
+        );
+
+        this.world.add({ position, graphics, rigidBody });
     }
 
     loadScene(scene: Scene) {
         this.reset();
-        this.addEntities(scene);
+        this.spawnEntitiesFromScene(scene);
     }
 
     tick() {
         this.physics.step();
 
+        // Physics -> ECS
         for (const entity of this.queries.dynamic) {
-            const position = entity.rigidBody!.translation();
+            const position = entity.rigidBody.translation();
             entity.position.x = position.x;
             entity.position.y = position.y;
         }
 
+        // ECS -> Graphics
         for (const entity of this.queries.renderable) {
             entity.graphics.x = entity.position.x;
             entity.graphics.y = entity.position.y;
