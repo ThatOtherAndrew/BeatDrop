@@ -1,7 +1,7 @@
 <script lang="ts">
     import { dev } from '$app/environment';
     import WelcomeModal from '$lib/components/WelcomeModal.svelte';
-    import App from '$lib/engine/ECSApp';
+    import App from '$lib/engine/App';
 
     let canvasContainer: HTMLElement | undefined = $state();
     let modalOpen = $state(true);

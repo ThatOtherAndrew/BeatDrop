@@ -2,7 +2,7 @@ import { Application, Graphics } from 'pixi.js';
 import Simulation from './Simulation';
 import Scene from './Scene';
 
-export default class ECSApp {
+export default class App {
     private mouseX: number = 0;
     private mouseY: number = 0;
 
@@ -13,15 +13,15 @@ export default class ECSApp {
 
     private constructor(
         private readonly simulation: Simulation,
-        private readonly graphics: Application,
+        readonly graphics: Application,
         private scene: Scene,
     ) {}
 
-    static async init(container: HTMLElement): Promise<ECSApp> {
+    static async init(container: HTMLElement): Promise<App> {
         const graphics = new Application();
         const scene = new Scene();
         const simulation = await Simulation.init(graphics, scene);
-        const app = new ECSApp(simulation, graphics, scene);
+        const app = new App(simulation, graphics, scene);
 
         await app.graphics.init({ background: 'black', resizeTo: container });
         app.graphics.stage.addChild(app.circle);
