@@ -8,7 +8,7 @@ export default class ECSApp {
 
     // temp
     circle = new Graphics()
-        .circle(0, 0, 10)
+        .circle(this.mouseX, this.mouseY, 25)
         .fill({ color: 0xffffff, alpha: 0.5 });
 
     private constructor(

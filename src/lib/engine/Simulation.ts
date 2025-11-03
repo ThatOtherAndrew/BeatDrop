@@ -83,17 +83,20 @@ export default class Simulation {
     }
 
     private spawnBall(entity: Ball) {
-        console.log('Spawning ball:', entity);
         const position = { x: entity.position.x, y: entity.position.y };
+
         const graphics = new Graphics()
             .circle(0, 0, entity.radius)
             .fill({ color: 0xffffff });
+        graphics.position.set(entity.position.x, entity.position.y);
+
         const rigidBody = this.physics.createRigidBody(
             this.rapier.RigidBodyDesc.dynamic().setTranslation(
                 entity.position.x,
                 entity.position.y,
             ),
         );
+
         const collider = this.physics.createCollider(
             this.rapier.ColliderDesc.ball(entity.radius),
             rigidBody,
