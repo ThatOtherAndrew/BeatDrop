@@ -1,4 +1,5 @@
 import { Application, Graphics } from 'pixi.js';
+import Camera from './Camera';
 import Scene from './Scene';
 import Simulation from './Simulation';
 
@@ -8,10 +9,8 @@ export default class App {
     private isDragging: boolean = false;
     private dragStartX: number = 0;
     private dragStartY: number = 0;
-    private cameraX: number = 0;
-    private cameraY: number = 0;
-    private cameraScale: number = 1;
     private hasDragged: boolean = false;
+    private camera: Camera;
 
     // temp
     circle = new Graphics()
@@ -24,6 +23,7 @@ export default class App {
         private scene: Scene,
     ) {
         this.tickSimulation = this.tickSimulation.bind(this);
+        this.camera = new Camera(this.graphics.stage);
     }
 
     static async init(
@@ -54,8 +54,9 @@ export default class App {
             const { x: screenX, y: screenY } = this.getScreenCoords(e);
 
             // Convert screen coords to world coords
-            this.mouseX = (screenX - this.cameraX) / this.cameraScale;
-            this.mouseY = (screenY - this.cameraY) / this.cameraScale;
+            const worldPos = this.camera.screenToWorld(screenX, screenY);
+            this.mouseX = worldPos.x;
+            this.mouseY = worldPos.y;
 
             if (this.isDragging) {
                 // Camera pan
@@ -64,13 +65,7 @@ export default class App {
 
                 if (deltaX !== 0 || deltaY !== 0) {
                     this.hasDragged = true;
-                    this.cameraX += deltaX;
-                    this.cameraY += deltaY;
-
-                    this.graphics.stage.position.set(
-                        this.cameraX,
-                        this.cameraY,
-                    );
+                    this.camera.pan(deltaX, deltaY);
 
                     this.dragStartX = screenX;
                     this.dragStartY = screenY;
@@ -84,24 +79,9 @@ export default class App {
                 e.preventDefault();
 
                 const { x: screenX, y: screenY } = this.getScreenCoords(e);
-
-                // Calculate world position before zoom
-                const worldX = (screenX - this.cameraX) / this.cameraScale;
-                const worldY = (screenY - this.cameraY) / this.cameraScale;
-
-                // Update scale
                 const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-                this.cameraScale = Math.max(
-                    0.1,
-                    Math.min(10, this.cameraScale * zoomFactor),
-                );
 
-                // Adjust camera position to zoom towards mouse
-                this.cameraX = screenX - worldX * this.cameraScale;
-                this.cameraY = screenY - worldY * this.cameraScale;
-
-                this.graphics.stage.scale.set(this.cameraScale);
-                this.graphics.stage.position.set(this.cameraX, this.cameraY);
+                this.camera.zoom(screenX, screenY, zoomFactor);
             },
             { passive: false },
         );
