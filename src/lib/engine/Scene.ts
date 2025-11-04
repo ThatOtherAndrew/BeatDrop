@@ -4,7 +4,16 @@ export type Ball = {
     radius: number;
 };
 
-type Entity = Ball;
+export type Block = {
+    type: 'block';
+    position: { x: number; y: number };
+    width: number;
+    height: number;
+    rotation: number;
+    pitch: number;
+};
+
+type Entity = Ball | Block;
 
 export default class Scene {
     constructor(
