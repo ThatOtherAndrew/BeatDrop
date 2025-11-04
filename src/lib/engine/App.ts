@@ -2,6 +2,7 @@ import { Application, Graphics } from 'pixi.js';
 import Camera from './Camera';
 import Scene from './Scene';
 import Simulation from './Simulation';
+import FileManager from './utils/FileManager';
 
 export default class App {
     private mouseX: number = 0;
@@ -117,33 +118,16 @@ export default class App {
         window.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
-                const blob = new Blob([this.scene.save()], {
-                    type: 'application/json',
-                });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'scene.json';
-                a.click();
+                FileManager.saveScene(this.scene);
                 return;
             }
 
             if (e.ctrlKey && e.key === 'o') {
                 e.preventDefault();
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'application/json';
-                input.onchange = (event: any) => {
-                    const file = event.target.files[0];
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const content = e.target?.result as string;
-                        this.scene = Scene.load(content);
-                        this.simulation.loadScene(this.scene);
-                    };
-                    reader.readAsText(file);
-                };
-                input.click();
+                FileManager.loadScene(Scene).then((scene) => {
+                    this.scene = scene;
+                    this.simulation.loadScene(this.scene);
+                });
                 return;
             }
 
