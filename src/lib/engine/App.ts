@@ -81,6 +81,11 @@ export default class App {
                 return;
             }
 
+            if (e.ctrlKey && e.key === 'z') {
+                this.scene.entities.pop();
+                this.simulation.loadScene(this.scene);
+            }
+
             if (e.key === 'ArrowRight') {
                 this.simulation.tick();
                 return;
