@@ -100,7 +100,10 @@ export default class App {
                         position: { x: this.mouseX, y: this.mouseY },
                         radius: 10,
                     });
-                    this.simulation.loadScene(this.scene);
+                    this.simulation.loadScene(
+                        this.scene,
+                        this.simulation.currentTick,
+                    );
                 }
                 this.isDragging = false;
             }

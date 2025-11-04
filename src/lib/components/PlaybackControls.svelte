@@ -6,7 +6,7 @@
 
     let { app }: { app: App } = $props();
 
-    let isPlaying = $state(true);
+    let isPlaying = $state(false);
     $effect(() => {
         if (isPlaying) {
             app.play();

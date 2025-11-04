@@ -60,10 +60,15 @@ export default class Simulation {
         return app;
     }
 
+    public get currentTick(): number {
+        return this._currentTick;
+    }
+
     private reset() {
         this.physics.free();
         this.physics = new this.rapier.World(this.gravity);
         this.world.clear();
+        this._currentTick = 0;
     }
 
     private spawnEntitiesFromScene(scene: Scene) {
@@ -101,26 +106,30 @@ export default class Simulation {
         this.world.add({ position, graphics, rigidBody, collider });
     }
 
-    loadScene(scene: Scene) {
+    loadScene(scene: Scene, tick: number = 0) {
         this.reset();
         this.spawnEntitiesFromScene(scene);
+        this.tick(tick);
     }
 
-    tick() {
-        this._currentTick += 1;
-        this.physics.step();
+    tick(numTicks: number = 1) {
+        this._currentTick += numTicks;
 
-        // Physics -> ECS
-        for (const entity of this.queries.dynamic) {
-            const position = entity.rigidBody.translation();
-            entity.position.x = position.x;
-            entity.position.y = position.y;
-        }
+        for (let i = 0; i < numTicks; i++) {
+            this.physics.step();
 
-        // ECS -> Graphics
-        for (const entity of this.queries.renderable) {
-            entity.graphics.x = entity.position.x;
-            entity.graphics.y = entity.position.y;
+            // Physics -> ECS
+            for (const entity of this.queries.dynamic) {
+                const position = entity.rigidBody.translation();
+                entity.position.x = position.x;
+                entity.position.y = position.y;
+            }
+
+            // ECS -> Graphics
+            for (const entity of this.queries.renderable) {
+                entity.graphics.x = entity.position.x;
+                entity.graphics.y = entity.position.y;
+            }
         }
     }
 }
