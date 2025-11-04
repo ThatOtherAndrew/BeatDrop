@@ -5,6 +5,12 @@ import Scene from './Scene';
 export default class App {
     private mouseX: number = 0;
     private mouseY: number = 0;
+    private isDragging: boolean = false;
+    private dragStartX: number = 0;
+    private dragStartY: number = 0;
+    private cameraX: number = 0;
+    private cameraY: number = 0;
+    private hasDragged: boolean = false;
 
     // temp
     circle = new Graphics()
@@ -45,18 +51,58 @@ export default class App {
     private registerEvents() {
         this.graphics.canvas.addEventListener('mousemove', (e) => {
             const rect = this.graphics.canvas.getBoundingClientRect();
-            this.mouseX = e.clientX - rect.left;
-            this.mouseY = e.clientY - rect.top;
+            const screenX = e.clientX - rect.left;
+            const screenY = e.clientY - rect.top;
+
+            // Convert screen coords to world coords
+            this.mouseX = screenX - this.cameraX;
+            this.mouseY = screenY - this.cameraY;
+
+            if (this.isDragging) {
+                // Camera pan
+                const deltaX = screenX - this.dragStartX;
+                const deltaY = screenY - this.dragStartY;
+
+                if (deltaX !== 0 || deltaY !== 0) {
+                    this.hasDragged = true;
+                    this.cameraX += deltaX;
+                    this.cameraY += deltaY;
+
+                    this.graphics.stage.position.set(
+                        this.cameraX,
+                        this.cameraY,
+                    );
+
+                    this.dragStartX = screenX;
+                    this.dragStartY = screenY;
+                }
+            }
         });
 
         this.graphics.canvas.addEventListener('mousedown', (e) => {
+            const rect = this.graphics.canvas.getBoundingClientRect();
+            const screenX = e.clientX - rect.left;
+            const screenY = e.clientY - rect.top;
+
             if (e.button === 0) {
-                this.scene.entities.push({
-                    type: 'ball',
-                    position: { x: this.mouseX, y: this.mouseY },
-                    radius: 10,
-                });
-                this.simulation.loadScene(this.scene);
+                this.isDragging = true;
+                this.hasDragged = false;
+                this.dragStartX = screenX;
+                this.dragStartY = screenY;
+            }
+        });
+
+        this.graphics.canvas.addEventListener('mouseup', (e) => {
+            if (e.button === 0) {
+                if (!this.hasDragged) {
+                    this.scene.entities.push({
+                        type: 'ball',
+                        position: { x: this.mouseX, y: this.mouseY },
+                        radius: 10,
+                    });
+                    this.simulation.loadScene(this.scene);
+                }
+                this.isDragging = false;
             }
         });
 
