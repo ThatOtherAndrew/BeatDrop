@@ -1,9 +1,19 @@
 <script lang="ts">
+    import type App from '$lib/engine/App';
     import Pause from 'phosphor-svelte/lib/Pause';
     import Play from 'phosphor-svelte/lib/Play';
     import Stop from 'phosphor-svelte/lib/Stop';
 
+    let { app }: { app: App } = $props();
+
     let isPlaying = $state(true);
+    $effect(() => {
+        if (isPlaying) {
+            app.play();
+        } else {
+            app.pause();
+        }
+    });
 
     function togglePlayPause() {
         isPlaying = !isPlaying;
@@ -11,6 +21,7 @@
 
     function handleStop() {
         isPlaying = false;
+        app.stop();
     }
 </script>
 

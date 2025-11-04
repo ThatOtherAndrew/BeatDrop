@@ -23,6 +23,8 @@ export default class Simulation {
     private readonly world: World<Entity> = new World();
     private readonly queries;
 
+    private _currentTick: number = 0;
+
     private constructor(
         private readonly rapier: typeof import('@dimforge/rapier2d'),
         private readonly graphics: Application,
@@ -105,6 +107,7 @@ export default class Simulation {
     }
 
     tick() {
+        this._currentTick += 1;
         this.physics.step();
 
         // Physics -> ECS

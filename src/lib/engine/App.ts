@@ -13,11 +13,16 @@ export default class App {
 
     private constructor(
         private readonly simulation: Simulation,
-        readonly graphics: Application,
+        private readonly graphics: Application,
         private scene: Scene,
-    ) {}
+    ) {
+        this.tickSimulation = this.tickSimulation.bind(this);
+    }
 
-    static async init(container: HTMLElement): Promise<App> {
+    static async init(
+        container: HTMLElement,
+        devMode: boolean = false,
+    ): Promise<App> {
         const graphics = new Application();
         const scene = new Scene();
         const simulation = await Simulation.init(graphics, scene);
@@ -27,10 +32,17 @@ export default class App {
         app.graphics.stage.addChild(app.circle);
         container.appendChild(app.graphics.canvas);
 
+        if (devMode) {
+            const { initDevtools } = await import('@pixi/devtools');
+            initDevtools({ app: app.graphics });
+        }
+
+        app.registerEvents();
+
         return app;
     }
 
-    run() {
+    private registerEvents() {
         this.graphics.canvas.addEventListener('mousemove', (e) => {
             const rect = this.graphics.canvas.getBoundingClientRect();
             this.mouseX = e.clientX - rect.left;
@@ -102,5 +114,21 @@ export default class App {
         this.graphics.ticker.add(() => {
             this.circle.position.set(this.mouseX, this.mouseY);
         });
+    }
+
+    private tickSimulation() {
+        this.simulation.tick();
+    }
+
+    play() {
+        this.graphics.ticker.add(this.tickSimulation);
+    }
+
+    pause() {
+        this.graphics.ticker.remove(this.tickSimulation);
+    }
+
+    stop() {
+        this.simulation.loadScene(this.scene);
     }
 }
