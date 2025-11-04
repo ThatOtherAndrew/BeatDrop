@@ -1,6 +1,6 @@
 import { Application, Graphics } from 'pixi.js';
-import Simulation from './Simulation';
 import Scene from './Scene';
+import Simulation from './Simulation';
 
 export default class App {
     private mouseX: number = 0;
@@ -10,6 +10,7 @@ export default class App {
     private dragStartY: number = 0;
     private cameraX: number = 0;
     private cameraY: number = 0;
+    private cameraScale: number = 1;
     private hasDragged: boolean = false;
 
     // temp
@@ -50,13 +51,11 @@ export default class App {
 
     private registerEvents() {
         this.graphics.canvas.addEventListener('mousemove', (e) => {
-            const rect = this.graphics.canvas.getBoundingClientRect();
-            const screenX = e.clientX - rect.left;
-            const screenY = e.clientY - rect.top;
+            const { x: screenX, y: screenY } = this.getScreenCoords(e);
 
             // Convert screen coords to world coords
-            this.mouseX = screenX - this.cameraX;
-            this.mouseY = screenY - this.cameraY;
+            this.mouseX = (screenX - this.cameraX) / this.cameraScale;
+            this.mouseY = (screenY - this.cameraY) / this.cameraScale;
 
             if (this.isDragging) {
                 // Camera pan
@@ -79,10 +78,36 @@ export default class App {
             }
         });
 
+        this.graphics.canvas.addEventListener(
+            'wheel',
+            (e) => {
+                e.preventDefault();
+
+                const { x: screenX, y: screenY } = this.getScreenCoords(e);
+
+                // Calculate world position before zoom
+                const worldX = (screenX - this.cameraX) / this.cameraScale;
+                const worldY = (screenY - this.cameraY) / this.cameraScale;
+
+                // Update scale
+                const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                this.cameraScale = Math.max(
+                    0.1,
+                    Math.min(10, this.cameraScale * zoomFactor),
+                );
+
+                // Adjust camera position to zoom towards mouse
+                this.cameraX = screenX - worldX * this.cameraScale;
+                this.cameraY = screenY - worldY * this.cameraScale;
+
+                this.graphics.stage.scale.set(this.cameraScale);
+                this.graphics.stage.position.set(this.cameraX, this.cameraY);
+            },
+            { passive: false },
+        );
+
         this.graphics.canvas.addEventListener('mousedown', (e) => {
-            const rect = this.graphics.canvas.getBoundingClientRect();
-            const screenX = e.clientX - rect.left;
-            const screenY = e.clientY - rect.top;
+            const { x: screenX, y: screenY } = this.getScreenCoords(e);
 
             if (e.button === 0) {
                 this.isDragging = true;
@@ -163,6 +188,14 @@ export default class App {
         this.graphics.ticker.add(() => {
             this.circle.position.set(this.mouseX, this.mouseY);
         });
+    }
+
+    private getScreenCoords(e: MouseEvent): { x: number; y: number } {
+        const rect = this.graphics.canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        };
     }
 
     private tickSimulation() {
