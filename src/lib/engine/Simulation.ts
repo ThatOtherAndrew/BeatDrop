@@ -6,14 +6,15 @@ import type {
 import { World } from 'miniplex';
 import { Application, Graphics } from 'pixi.js';
 import type Scene from './Scene';
-import type { Ball } from './Scene';
+import type { Ball, Block } from './Scene';
+import { pitchToColour } from './utils/ColourUtils';
 
 type Entity = {
     position: { x: number; y: number };
     graphics?: Graphics;
     rigidBody?: RigidBody;
     collider?: Collider;
-    cursor?: true;
+    pitch?: number;
 };
 
 export default class Simulation {
@@ -77,8 +78,11 @@ export default class Simulation {
                 case 'ball':
                     this.spawnBall(entity);
                     break;
+                case 'block':
+                    this.spawnBlock(entity);
+                    break;
                 default:
-                    console.warn(`Unknown entity type: ${entity.type}`);
+                    console.warn(`Unknown entity:`, entity);
             }
         }
     }
@@ -104,6 +108,31 @@ export default class Simulation {
         );
 
         this.world.add({ position, graphics, rigidBody, collider });
+    }
+
+    private spawnBlock(entity: Block) {
+        const position = { x: entity.position.x, y: entity.position.y };
+        const colour = pitchToColour(entity.pitch);
+
+        const graphics = new Graphics()
+            .rect(
+                -entity.width / 2,
+                -entity.height / 2,
+                entity.width,
+                entity.height,
+            )
+            .fill({ color: colour });
+        graphics.position.set(entity.position.x, entity.position.y);
+        graphics.rotation = entity.rotation;
+
+        const collider = this.physics.createCollider(
+            this.rapier.ColliderDesc.cuboid(entity.width / 2, entity.height / 2)
+                .setTranslation(entity.position.x, entity.position.y)
+                .setRotation(entity.rotation)
+                .setRestitution(1),
+        );
+
+        this.world.add({ position, graphics, collider, pitch: entity.pitch });
     }
 
     loadScene(scene: Scene, tick: number = 0) {
