@@ -1,5 +1,5 @@
-import type Cursor from './Cursor';
 import type App from '../App';
+import type Cursor from './Cursor';
 
 export default class CursorManager {
     private cursors: Cursor[];
