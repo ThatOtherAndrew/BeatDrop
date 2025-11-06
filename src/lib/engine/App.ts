@@ -2,11 +2,12 @@ import { Application } from 'pixi.js';
 import type { AudioEngine } from './audio/AudioEngine';
 import SoundFontPlayer from './audio/SoundFontPlayer';
 import Camera from './Camera';
-import type Cursor from './cursor/Cursor';
+import BallCursor from './cursor/BallCursor';
+import BlockCursor from './cursor/BlockCursor';
+import CursorManager from './cursor/CursorManager';
 import Scene from './Scene';
 import Simulation from './Simulation';
 import FileManager from './utils/FileManager';
-import BlockCursor from './cursor/BlockCursor';
 
 export default class App {
     private mouseX: number = 0;
@@ -18,16 +19,17 @@ export default class App {
     readonly audio: AudioEngine = new SoundFontPlayer();
 
     private camera: Camera;
-    private cursor: Cursor;
+    private cursor: CursorManager;
 
     private constructor(
-        readonly simulation: Simulation,
-        private readonly graphics: Application,
+        public readonly simulation: Simulation,
+        public readonly graphics: Application,
         public scene: Scene,
     ) {
-        this.tickSimulation = this.tickSimulation.bind(this);
         this.camera = new Camera(this.graphics.stage);
-        this.cursor = new BlockCursor(this);
+        this.cursor = new CursorManager(this, [BallCursor, BlockCursor]);
+
+        this.tickSimulation = this.tickSimulation.bind(this);
     }
 
     static async init(
@@ -40,7 +42,6 @@ export default class App {
         const app = new App(simulation, graphics, scene);
 
         await app.graphics.init({ background: 'black', resizeTo: container });
-        app.graphics.stage.addChild(app.cursor.graphics);
         container.appendChild(app.graphics.canvas);
 
         await app.audio.load('marimba');
@@ -85,7 +86,7 @@ export default class App {
                 e.preventDefault();
 
                 if (e.ctrlKey || e.shiftKey || e.altKey) {
-                    this.cursor.handleWheel?.(e);
+                    this.cursor.getActive().handleWheel?.(e);
                 } else {
                     const { x, y } = this.getScreenCoords(e);
                     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
@@ -109,13 +110,23 @@ export default class App {
         this.graphics.canvas.addEventListener('mouseup', (e) => {
             if (e.button === 0) {
                 if (!this.hasDragged) {
-                    this.cursor.handleClick(e);
+                    this.cursor.getActive().handleClick(e);
                 }
                 this.isDragging = false;
             }
         });
 
         window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.cursor.previous();
+                return;
+            }
+
+            if (e.key === 'ArrowRight') {
+                this.cursor.next();
+                return;
+            }
+
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
                 FileManager.saveScene(this.scene);
@@ -134,17 +145,6 @@ export default class App {
             if (e.ctrlKey && e.key === 'z') {
                 this.scene.entities.pop();
                 this.simulation.loadScene(this.scene);
-            }
-
-            if (e.key === 'ArrowRight') {
-                this.simulation.tick();
-                return;
-            }
-
-            if (e.key === ' ') {
-                for (let i = 0; i < 10; i++) {
-                    this.simulation.tick();
-                }
                 return;
             }
         });
@@ -152,6 +152,10 @@ export default class App {
         this.graphics.ticker.add(() => {
             this.cursor.updatePosition(this.mouseX, this.mouseY);
         });
+    }
+
+    public getMouseCoords(): { x: number; y: number } {
+        return { x: this.mouseX, y: this.mouseY };
     }
 
     private getScreenCoords(e: MouseEvent): { x: number; y: number } {
