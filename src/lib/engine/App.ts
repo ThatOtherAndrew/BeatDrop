@@ -6,7 +6,7 @@ import BallCursor from './cursor/BallCursor';
 import BlockCursor from './cursor/BlockCursor';
 import CursorManager from './cursor/CursorManager';
 import Scene from './Scene';
-import Simulation from './Simulation';
+import Simulation from './physics/Simulation';
 import FileManager from './utils/FileManager';
 
 export default class App {
@@ -16,7 +16,6 @@ export default class App {
     private dragStartX: number = 0;
     private dragStartY: number = 0;
     private hasDragged: boolean = false;
-    readonly audio: AudioEngine = new SoundFontPlayer();
 
     private camera: Camera;
     private cursor: CursorManager;
@@ -24,6 +23,7 @@ export default class App {
     private constructor(
         public readonly simulation: Simulation,
         public readonly graphics: Application,
+        public readonly audio: AudioEngine,
         public scene: Scene,
     ) {
         this.camera = new Camera(this.graphics.stage);
@@ -38,8 +38,9 @@ export default class App {
     ): Promise<App> {
         const graphics = new Application();
         const scene = new Scene();
-        const simulation = await Simulation.init(graphics, scene);
-        const app = new App(simulation, graphics, scene);
+        const audio = new SoundFontPlayer();
+        const simulation = await Simulation.init(graphics, audio, scene);
+        const app = new App(simulation, graphics, audio, scene);
 
         await app.graphics.init({ background: 'black', resizeTo: container });
         container.appendChild(app.graphics.canvas);

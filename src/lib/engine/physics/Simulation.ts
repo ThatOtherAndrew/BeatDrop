@@ -1,15 +1,18 @@
 import type {
     Collider,
+    EventQueue,
     World as PhysicsWorld,
     RigidBody,
 } from '@dimforge/rapier2d';
 import { World } from 'miniplex';
 import { Application, Graphics } from 'pixi.js';
-import type Scene from './Scene';
-import type { Ball, Block } from './Scene';
-import { pitchToColour } from './utils/ColourUtils';
+import type { AudioEngine } from '../audio/AudioEngine';
+import type Scene from '../Scene';
+import type { Ball, Block } from '../Scene';
+import { pitchToColour } from '../utils/ColourUtils';
+import CollisionHandler from './CollisionHandler';
 
-type Entity = {
+export type Entity = {
     position: { x: number; y: number };
     graphics?: Graphics;
     rigidBody?: RigidBody;
@@ -22,6 +25,8 @@ export default class Simulation {
 
     private physics: PhysicsWorld;
     private readonly world: World<Entity> = new World();
+    private eventQueue: EventQueue;
+    private collisionHandler: CollisionHandler;
     private readonly queries;
 
     private _currentTick: number = 0;
@@ -29,9 +34,17 @@ export default class Simulation {
     private constructor(
         private readonly rapier: typeof import('@dimforge/rapier2d'),
         private readonly graphics: Application,
+        private readonly audio: AudioEngine,
         scene: Scene,
     ) {
         this.physics = new rapier.World(this.gravity);
+        this.eventQueue = new rapier.EventQueue(true);
+        this.collisionHandler = new CollisionHandler(
+            this.physics,
+            this.world,
+            audio,
+        );
+
         this.queries = {
             renderable: this.world.with('graphics'),
             dynamic: this.world.with('rigidBody'),
@@ -53,12 +66,11 @@ export default class Simulation {
 
     static async init(
         graphics: Application,
+        audio: AudioEngine,
         scene: Scene,
     ): Promise<Simulation> {
         const rapier = await import('@dimforge/rapier2d');
-        const app = new Simulation(rapier, graphics, scene);
-
-        return app;
+        return new Simulation(rapier, graphics, audio, scene);
     }
 
     public get currentTick(): number {
@@ -68,6 +80,12 @@ export default class Simulation {
     private reset() {
         this.physics.free();
         this.physics = new this.rapier.World(this.gravity);
+        this.eventQueue = new this.rapier.EventQueue(true);
+        this.collisionHandler = new CollisionHandler(
+            this.physics,
+            this.world,
+            this.audio,
+        );
         this.world.clear();
         this._currentTick = 0;
     }
@@ -129,7 +147,8 @@ export default class Simulation {
             this.rapier.ColliderDesc.cuboid(entity.width / 2, entity.height / 2)
                 .setTranslation(entity.position.x, entity.position.y)
                 .setRotation(entity.rotation)
-                .setRestitution(1),
+                .setRestitution(1)
+                .setActiveEvents(this.rapier.ActiveEvents.COLLISION_EVENTS),
         );
 
         this.world.add({ position, graphics, collider, pitch: entity.pitch });
@@ -145,7 +164,10 @@ export default class Simulation {
         this._currentTick += numTicks;
 
         for (let i = 0; i < numTicks; i++) {
-            this.physics.step();
+            this.physics.step(this.eventQueue);
+
+            // Process collisions
+            this.collisionHandler.process(this.eventQueue);
 
             // Physics -> ECS
             for (const entity of this.queries.dynamic) {
