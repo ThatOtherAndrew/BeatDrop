@@ -2,7 +2,7 @@ import { Graphics } from 'pixi.js';
 import type App from '../App';
 import Cursor from './Cursor';
 
-const RADIUS = 10;
+const RADIUS = 20;
 const COLOUR = 0xffffff;
 
 export default class BallCursor extends Cursor {

@@ -2,11 +2,11 @@ import { Application } from 'pixi.js';
 import type { AudioEngine } from './audio/AudioEngine';
 import SoundFontPlayer from './audio/SoundFontPlayer';
 import Camera from './Camera';
-import BallCursor from './cursor/BallCursor';
 import type Cursor from './cursor/Cursor';
 import Scene from './Scene';
 import Simulation from './Simulation';
 import FileManager from './utils/FileManager';
+import BlockCursor from './cursor/BlockCursor';
 
 export default class App {
     private mouseX: number = 0;
@@ -27,7 +27,7 @@ export default class App {
     ) {
         this.tickSimulation = this.tickSimulation.bind(this);
         this.camera = new Camera(this.graphics.stage);
-        this.cursor = new BallCursor(this);
+        this.cursor = new BlockCursor(this);
     }
 
     static async init(
@@ -84,10 +84,13 @@ export default class App {
             (e) => {
                 e.preventDefault();
 
-                const { x, y } = this.getScreenCoords(e);
-                const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-
-                this.camera.zoom(x, y, zoomFactor);
+                if (e.ctrlKey || e.shiftKey || e.altKey) {
+                    this.cursor.handleWheel?.(e);
+                } else {
+                    const { x, y } = this.getScreenCoords(e);
+                    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                    this.camera.zoom(x, y, zoomFactor);
+                }
             },
             { passive: false },
         );
