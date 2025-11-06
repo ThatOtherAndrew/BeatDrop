@@ -1,4 +1,6 @@
 import { Application, Graphics } from 'pixi.js';
+import type { AudioEngine } from './audio/AudioEngine';
+import SoundFontPlayer from './audio/SoundFontPlayer';
 import Camera from './Camera';
 import Scene from './Scene';
 import Simulation from './Simulation';
@@ -12,6 +14,7 @@ export default class App {
     private dragStartY: number = 0;
     private hasDragged: boolean = false;
     private camera: Camera;
+    readonly audioEngine: AudioEngine;
 
     // temp
     circle = new Graphics()
@@ -25,6 +28,7 @@ export default class App {
     ) {
         this.tickSimulation = this.tickSimulation.bind(this);
         this.camera = new Camera(this.graphics.stage);
+        this.audioEngine = new SoundFontPlayer();
     }
 
     static async init(
@@ -39,6 +43,8 @@ export default class App {
         await app.graphics.init({ background: 'black', resizeTo: container });
         app.graphics.stage.addChild(app.circle);
         container.appendChild(app.graphics.canvas);
+
+        await app.audioEngine.load('marimba');
 
         if (devMode) {
             const { initDevtools } = await import('@pixi/devtools');
