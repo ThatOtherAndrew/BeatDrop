@@ -1,7 +1,7 @@
 import { Application } from 'pixi.js';
 import type { AudioEngine } from './audio/AudioEngine';
 import SoundFontPlayer from './audio/SoundFontPlayer';
-import Camera from './Camera';
+import Camera from './canvas/Camera';
 import BallCursor from './cursor/BallCursor';
 import BlockCursor from './cursor/BlockCursor';
 import CursorManager from './cursor/CursorManager';
