@@ -1,3 +1,4 @@
+import DEFAULT_SCENE from '$lib/assets/default_scene.json';
 import { Application } from 'pixi.js';
 import type { AudioEngine } from './audio/AudioEngine';
 import SoundFontPlayer from './audio/SoundFontPlayer';
@@ -31,7 +32,7 @@ export default class App {
         devMode: boolean = false,
     ): Promise<App> {
         const graphics = new Application();
-        const scene = new Scene();
+        const scene = Scene.load(DEFAULT_SCENE);
         const audio = new SoundFontPlayer();
         const simulation = await Simulation.init(graphics, audio, scene);
         const app = new App(simulation, graphics, audio, scene);

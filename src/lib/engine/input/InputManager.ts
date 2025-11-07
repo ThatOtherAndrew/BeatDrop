@@ -94,7 +94,7 @@ export default class InputManager {
 
             if (e.ctrlKey && e.key === 'o') {
                 e.preventDefault();
-                FileManager.loadScene(Scene).then((scene) => {
+                FileManager.loadSceneFile().then((scene) => {
                     this.app.scene = scene;
                     this.app.simulation.loadScene(scene);
                 });

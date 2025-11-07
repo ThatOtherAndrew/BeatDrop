@@ -1,4 +1,4 @@
-import type Scene from '../Scene';
+import Scene from '../Scene';
 
 export default class FileManager {
     /**
@@ -20,7 +20,7 @@ export default class FileManager {
      * Load a scene from a file dialog
      * Returns a Promise that resolves with the loaded Scene
      */
-    static loadScene(SceneClass: typeof Scene): Promise<Scene> {
+    static loadSceneFile(): Promise<Scene> {
         return new Promise((resolve, reject) => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -39,8 +39,8 @@ export default class FileManager {
 
                 reader.onload = (e) => {
                     try {
-                        const content = e.target?.result as string;
-                        const scene = SceneClass.load(content);
+                        const content = JSON.parse(e.target?.result as string);
+                        const scene = Scene.load(content);
                         resolve(scene);
                     } catch (error) {
                         reject(error);

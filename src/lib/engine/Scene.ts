@@ -21,8 +21,7 @@ export default class Scene {
         public entities: Entity[] = [],
     ) {}
 
-    static load(data: string): Scene {
-        const obj = JSON.parse(data);
+    static load(obj: any): Scene {
         return new Scene(obj.name, obj.entities);
     }
 
