@@ -21,7 +21,7 @@ export type Entity = {
 };
 
 export default class Simulation {
-    public readonly gravity = { x: 0, y: 100 } as const;
+    public readonly gravity = { x: 0, y: 500 } as const;
 
     private physics: PhysicsWorld;
     private readonly world: World<Entity> = new World();

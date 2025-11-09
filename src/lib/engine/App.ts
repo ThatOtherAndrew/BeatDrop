@@ -39,6 +39,8 @@ export default class App {
 
         // Initialise graphics
         await app.graphics.init({ background: 'black', resizeTo: container });
+        app.graphics.ticker.minFPS = 60;
+        app.graphics.ticker.maxFPS = 60;
         container.appendChild(app.graphics.canvas);
         if (devMode) {
             const { initDevtools } = await import('@pixi/devtools');

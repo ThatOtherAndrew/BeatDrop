@@ -1,5 +1,4 @@
 import type App from '../App';
-import Scene from '../Scene';
 import FileManager from '../utils/FileManager';
 
 export default class InputManager {
