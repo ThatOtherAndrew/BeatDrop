@@ -110,6 +110,11 @@ export default class InputManager {
                 this.app.simulation.loadScene(this.app.scene);
                 return;
             }
+
+            if (e.key.match(/^[1-9]$/)) {
+                this.app.stop();
+                this.app.simulation.tick(parseInt(e.key, 10) * 120);
+            }
         });
 
         this.app.graphics.canvas.addEventListener(
