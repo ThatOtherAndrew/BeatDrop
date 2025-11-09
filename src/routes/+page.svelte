@@ -36,5 +36,6 @@
     .canvas-container {
         position: absolute;
         inset: 0;
+        background-color: black;
     }
 </style>
