@@ -4,6 +4,7 @@
 
 <svelte:head>
     <title>BeatDrop!</title>
+    <meta name="theme-color" content="black" />
 </svelte:head>
 
 {@render children?.()}
