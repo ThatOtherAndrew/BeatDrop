@@ -38,7 +38,11 @@ export default class App {
         const app = new App(simulation, graphics, audio, scene);
 
         // Initialise graphics
-        await app.graphics.init({ background: 'black', resizeTo: container });
+        await app.graphics.init({
+            background: 'black',
+            resizeTo: container,
+            preference: 'webgpu',
+        });
         app.graphics.ticker.minFPS = 60;
         app.graphics.ticker.maxFPS = 60;
         container.appendChild(app.graphics.canvas);
