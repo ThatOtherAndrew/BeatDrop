@@ -45,6 +45,8 @@ export default class App {
         });
         app.graphics.ticker.minFPS = 60;
         app.graphics.ticker.maxFPS = 60;
+        app.camera.initialiseScale(app.graphics.canvas.width);
+
         container.appendChild(app.graphics.canvas);
         if (devMode) {
             const { initDevtools } = await import('@pixi/devtools');

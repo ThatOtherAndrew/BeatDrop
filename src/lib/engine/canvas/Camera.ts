@@ -8,6 +8,21 @@ export default class Camera {
     constructor(private readonly stage: Container) {}
 
     /**
+     * Set initial scale based on viewport width for better mobile viewing
+     */
+    initialiseScale(viewportWidth: number): void {
+        // Scale down on narrow screens (phones)
+        if (viewportWidth < 768) {
+            this.scale = 0.5;
+        } else if (viewportWidth < 1024) {
+            this.scale = 0.75;
+        } else {
+            this.scale = 1;
+        }
+        this.updateTransform();
+    }
+
+    /**
      * Pan the camera by the given delta in screen coordinates
      */
     pan(deltaX: number, deltaY: number): void {
