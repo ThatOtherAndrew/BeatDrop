@@ -94,24 +94,33 @@
                 </div>
                 <h2>Controls</h2>
                 <p>
-                    Currently, the only control scheme supported is <b
-                        >keyboard and mouse/touchpad</b
-                    > (sorry, mobile users!).
+                    Currently, the only control scheme fully supported for
+                    editing is <b>keyboard and mouse/touchpad</b> (sorry, mobile
+                    users!).
                 </p>
                 <ul>
                     <li>
                         <b>Click:</b> Place a ball or brick
                     </li>
                     <li>
+                        <b>Click & drag:</b> Move/pan across the canvas
+                    </li>
+                    <li>
                         <b>Left/Right arrow keys:</b> Switch between ball and brick
                         placement mode
                     </li>
                     <li>
-                        <b>Scroll up/down:</b> Change the pitch of the next brick
+                        <b>Scroll up/down:</b> Zoom in/out
+                    </li>
+                    <li>
+                        <b>Ctrl + scroll:</b> Change the pitch of the next brick
                         to be placed
                     </li>
                     <li>
                         <b>Shift + scroll:</b> Rotate the next brick to be placed
+                    </li>
+                    <li>
+                        <b>Number keys (0-9):</b> Skip to playback time
                     </li>
                 </ul>
             </div>

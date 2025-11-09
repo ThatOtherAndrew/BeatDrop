@@ -111,7 +111,7 @@ export default class InputManager {
                 return;
             }
 
-            if (e.key.match(/^[1-9]$/)) {
+            if (e.key.match(/^\d$/)) {
                 this.app.stop();
                 this.app.simulation.tick(parseInt(e.key, 10) * 120);
             }
